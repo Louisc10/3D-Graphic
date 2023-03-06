@@ -9,7 +9,7 @@ from texture import Texture, Textured
 
 
 # -------------- Example textured plane class ---------------------------------
-class TexturedPlane(Textured):
+class TexturedPlane(Textured): #class TexturedPlane extends Textured
     """ Simple first textured object """
     def __init__(self, shader, tex_file):
         # prepare texture modes cycling variables for interactive toggling
@@ -52,6 +52,10 @@ def main():
         print('Usage:\n\t%s [3dfile]*\n\n3dfile\t\t the filename of a model in'
               ' format supported by assimp.' % (sys.argv[0],))
         viewer.add(TexturedPlane(shader, "grass.png"))
+        
+    light_dir = (-1, 1, 1)
+    viewer.add(*[mesh for file in sys.argv[1:]
+                 for mesh in load(file, shader, light_dir=light_dir)])
 
     # start rendering loop
     viewer.run()
