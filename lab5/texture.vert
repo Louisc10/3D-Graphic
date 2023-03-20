@@ -14,8 +14,8 @@ out vec3 w_normal;
 
 void main() {
     gl_Position = projection * view * model * vec4(position, 1);
-    // frag_tex_coords = position.xy;
-    frag_tex_coords = tex_coord;
+    // frag_tex_coords = position.xy; //used for texture
+    frag_tex_coords = tex_coord;  // used for phong model
 
     //From Phong.vert
     w_normal = (model * vec4(normal, 0)).xyz;

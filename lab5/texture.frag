@@ -1,6 +1,7 @@
 #version 330 core
 
 uniform sampler2D diffuse_map;
+uniform sampler2D second_texture;
 
 // light dir, in world coordinates
 uniform vec3 light_dir;
@@ -47,5 +48,12 @@ void main() {
     vec3 col = ambiant + diffuse + specular;
 
     out_color =  vec4(col, 1);
+
+    // //One texture
     // out_color = texture(diffuse_map, frag_tex_coords);
+
+    // // two texture
+    // vec4 color1 = texture(diffuse_map, frag_tex_coords);
+    // vec4 color2 = texture(second_texture, frag_tex_coords);
+    // out_color = mix(color1, color2, color2.a);  // analyse what is done here!
 }

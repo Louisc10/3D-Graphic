@@ -39,6 +39,29 @@ class TexturedPlane(Textured): #class TexturedPlane extends Textured
             texture = Texture(self.file, self.wrap, *self.filter)
             self.textures.update(diffuse_map=texture)
 
+class MultiTexturedPlane(Textured):
+    """ Simple multi-textured object """
+    def __init__(self, shader, tex_file1, tex_file2):
+        # prepare texture modes cycling variables for interactive toggling
+        self.wraps = cycle([GL.GL_REPEAT, GL.GL_MIRRORED_REPEAT,
+                            GL.GL_CLAMP_TO_BORDER, GL.GL_CLAMP_TO_EDGE])
+        self.filters = cycle([(GL.GL_NEAREST, GL.GL_NEAREST),
+                              (GL.GL_LINEAR, GL.GL_LINEAR),
+                              (GL.GL_LINEAR, GL.GL_LINEAR_MIPMAP_LINEAR)])
+        self.wrap, self.filter = next(self.wraps), next(self.filters)
+        self.file1 = tex_file1
+        self.file2 = tex_file2
+        
+        # setup plane mesh to be textured
+        base_coords = ((-1, -1, 0), (1, -1, 0), (1, 1, 0), (-1, 1, 0))
+        scaled = 100 * np.array(base_coords, np.float32)
+        indices = np.array((0, 1, 2, 0, 2, 3), np.uint32)
+        mesh = Mesh(shader, attributes=dict(position=scaled), index=indices)
+
+        # setup & upload two textures to GPU
+        texture1 = Texture(tex_file1, self.wrap, *self.filter)
+        texture2 = Texture(tex_file2, self.wrap, *self.filter)
+        super().__init__(mesh, diffuse_map=texture1, second_texture=texture2)
 
 # -------------- main program and scene setup --------------------------------
 def main():
@@ -51,7 +74,7 @@ def main():
     if len(sys.argv) != 2:
         print('Usage:\n\t%s [3dfile]*\n\n3dfile\t\t the filename of a model in'
               ' format supported by assimp.' % (sys.argv[0],))
-        viewer.add(TexturedPlane(shader, "grass.png"))
+        viewer.add(MultiTexturedPlane(shader, "grass.png", "flowers.png"))
         
     light_dir = (-1, 1, 1)
     viewer.add(*[mesh for file in sys.argv[1:]
