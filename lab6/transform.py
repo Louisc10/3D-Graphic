@@ -172,6 +172,8 @@ def quaternion_slerp(q0, q1, fraction):
 
     return q0*math.cos(theta) + q2*math.sin(theta)
 
+def clamp(num, min_value, max_value):
+    return max(min(num, max_value), min_value)
 
 # a trackball class based on provided quaternion functions -------------------
 class Trackball:
@@ -190,6 +192,7 @@ class Trackball:
 
     def zoom(self, delta, size):
         """ Zoom trackball by a factor delta normalized by window size """
+        print(self.distance)
         self.distance = max(0.001, self.distance * (1 - 50*delta/size))
 
     def pan(self, old, new):
